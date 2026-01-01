@@ -72,4 +72,4 @@ SKYCAST utilizes AES-256 Local Persistence logic. All geographic telemetry and p
 
 [ ] v1.3.0: Multiple City Telemetry Comparison Module.
 
-## Developed by Ali Ahmed | Build v1.0.0 (Base Alpha)
+## Developed by Ali Ahmed | Build v1.0.0
