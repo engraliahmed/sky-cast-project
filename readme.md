@@ -28,7 +28,7 @@
 
 ---
 
-## 🚀 Step-by-Step Installation Guide
+## Step-by-Step Installation Guide
 
 Follow these steps to get the project running on your local machine:
 
@@ -36,26 +36,31 @@ Follow these steps to get the project running on your local machine:
 First, download the source code to your system:
 ```bash
 git clone [https://github.com/your-username/skycast.git](https://github.com/your-username/skycast.git)
+```
 
-2. Install Dependencies
+### 2. Install Dependencies
+
 Navigate into the project folder and install all required packages:
 
+```bash
 cd skycast
 npm install
+```
 
-
-3. Configure Environment Variables
+### 3. Configure Environment Variables
 Create a file named .env.local in the root directory and paste your OpenWeatherMap API key:
 
+```bash
 NEXT_PUBLIC_WEATHER_API_KEY=your_openweathermap_api_key_here
+```
 
-
-4. Launch Development Server
+### 4. Launch Development Server
 Start the local server to see the project in action:
 
+```bash
 npm run dev
 Now open http://localhost:3000 in your browser.
-
+```
 
 🛡️ Security Architecture
 SKYCAST utilizes AES-256 Local Persistence logic. All geographic telemetry and profile configurations are restricted to local node storage (LocalStorage) and are never transmitted to external cloud databases.
@@ -67,4 +72,4 @@ SKYCAST utilizes AES-256 Local Persistence logic. All geographic telemetry and p
 
 [ ] v1.3.0: Multiple City Telemetry Comparison Module.
 
-Developed by Ali Ahmed | Build v1.0.0 (Base Alpha)
+## Developed by Ali Ahmed | Build v1.0.0 (Base Alpha)
