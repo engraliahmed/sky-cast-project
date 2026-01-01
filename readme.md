@@ -35,7 +35,7 @@ Follow these steps to get the project running on your local machine:
 ### 1. Clone the repository
 First, download the source code to your system:
 ```bash
-git clone [https://github.com/your-username/skycast.git](https://github.com/your-username/skycast.git)
+git clone [https://github.com/engraliahmed/sky-cast-project.git](https://github.com/engraliahmed/sky-cast-project.git)
 ```
 
 ### 2. Install Dependencies
