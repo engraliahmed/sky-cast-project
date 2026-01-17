@@ -17,6 +17,7 @@ import {
     Wind,
     Droplets,
     AlertCircle,
+    ArrowRight,
 } from "lucide-react";
 
 const dummyData = [
@@ -41,28 +42,21 @@ function ForecastContent() {
     const fetchForecast = async (e, targetCity = city) => {
         if (e) e.preventDefault();
         if (!targetCity.trim()) return;
-
         setLoading(true);
         setError("");
 
-        // Naya: LocalStorage se unit preference uthana (Celsius/Fahrenheit ke liye)
         const savedUnit =
             typeof window !== "undefined"
                 ? localStorage.getItem("weatherUnit") || "metric"
                 : "metric";
 
         try {
-            // Updated fetch: units parameter ab dynamically pass ho raha hai
             const res = await fetch(
-                `/api/weather?city=${targetCity}&type=forecast&units=${savedUnit}`
+                `/api/weather?city=${targetCity}&type=forecast&units=${savedUnit}`,
             );
             const data = await res.json();
-
-            if (!res.ok || data.error) {
-                throw new Error(
-                    data.error || "City not found. Please check spelling."
-                );
-            }
+            if (!res.ok || data.error)
+                throw new Error(data.error || "City not found.");
 
             if (data.list) {
                 const daily = data.list
@@ -70,7 +64,7 @@ function ForecastContent() {
                     .map((item) => ({
                         name: new Date(item.dt_txt).toLocaleDateString(
                             "en-US",
-                            { weekday: "short" }
+                            { weekday: "short" },
                         ),
                         temp: Math.round(item.main.temp),
                         condition: item.weather[0].main,
@@ -97,14 +91,15 @@ function ForecastContent() {
     }, [urlCity]);
 
     return (
-        <div className="max-w-5xl mx-auto space-y-6 animate-in fade-in duration-500 pb-10">
-            <header className="flex flex-col sm:flex-row justify-between items-center gap-4">
+        <div className="max-w-6xl mx-auto space-y-6 animate-in fade-in duration-500 p-4 md:p-0 pb-24 md:pb-10 text-white">
+            {/* Header Section */}
+            <header className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
                 <div className="flex items-center gap-4">
                     <div className="p-3 bg-blue-500/10 rounded-2xl text-blue-500">
                         <CloudSun size={28} />
                     </div>
-                    <div>
-                        <h1 className="text-2xl font-bold tracking-tight text-white">
+                    <div className="text-left">
+                        <h1 className="text-2xl font-bold tracking-tight">
                             Extended Forecast
                         </h1>
                         <p className="text-slate-500 text-xs italic">
@@ -115,13 +110,11 @@ function ForecastContent() {
 
                 <form
                     onSubmit={fetchForecast}
-                    className="flex gap-2 w-full sm:w-auto"
+                    className="flex gap-2 w-full md:w-auto"
                 >
-                    <div className="relative flex-1 sm:w-64">
+                    <div className="relative flex-1 md:w-64">
                         <input
-                            className={`w-full bg-white/5 border ${
-                                error ? "border-red-500/50" : "border-white/10"
-                            } p-2.5 pl-9 rounded-xl text-sm outline-none focus:ring-1 focus:ring-blue-500/50 transition-all text-white`}
+                            className={`w-full bg-white/5 border ${error ? "border-red-500/50" : "border-white/10"} p-2.5 pl-9 rounded-xl text-sm outline-none focus:ring-1 focus:ring-blue-500/50 transition-all`}
                             placeholder="Search city..."
                             value={city}
                             onChange={(e) => setCity(e.target.value)}
@@ -134,7 +127,7 @@ function ForecastContent() {
                     <button
                         type="submit"
                         disabled={loading}
-                        className="bg-blue-600 hover:bg-blue-500 p-2.5 rounded-xl font-semibold text-sm transition-all flex items-center gap-2 active:scale-95 disabled:opacity-50 text-white"
+                        className="bg-blue-600 hover:bg-blue-500 px-4 py-2.5 rounded-xl font-semibold text-sm transition-all flex items-center gap-2 active:scale-95 disabled:opacity-50"
                     >
                         {loading ? (
                             <RefreshCw className="animate-spin" size={16} />
@@ -152,14 +145,15 @@ function ForecastContent() {
                 </div>
             )}
 
+            {/* Chart Container */}
+            {/* Chart Container - Optimized for Phone */}
             <div
-                className={`glass-card p-6 h-[320px] w-full relative transition-opacity ${
-                    loading ? "opacity-50" : "opacity-100"
-                }`}
+                className={`glass-card p-2 md:p-6 h-[250px] md:h-[320px] w-full relative transition-opacity ${loading ? "opacity-50" : "opacity-100"}`}
             >
                 <ResponsiveContainer width="100%" height="100%">
                     <AreaChart
                         data={forecast}
+                        margin={{ top: 10, right: 10, left: -20, bottom: 0 }} // Left margin negative taake phone par space bache
                         onMouseMove={(v) =>
                             v.activeTooltipIndex !== undefined &&
                             setActiveIndex(v.activeTooltipIndex)
@@ -176,7 +170,7 @@ function ForecastContent() {
                                 <stop
                                     offset="5%"
                                     stopColor="#3b82f6"
-                                    stopOpacity={0.2}
+                                    stopOpacity={0.4}
                                 />
                                 <stop
                                     offset="95%"
@@ -185,33 +179,43 @@ function ForecastContent() {
                                 />
                             </linearGradient>
                         </defs>
+
+                        {/* Grid lines ko phone par mazeed halka kiya hai */}
                         <CartesianGrid
                             strokeDasharray="3 3"
                             stroke="#ffffff05"
                             vertical={false}
                         />
+
                         <XAxis
                             dataKey="name"
                             stroke="#475569"
                             axisLine={false}
                             tickLine={false}
-                            tick={{ fontSize: 10 }}
+                            tick={{ fontSize: 9, fontWeight: "bold" }} // Chota font for mobile
+                            dy={10}
                         />
+
                         <YAxis
                             stroke="#475569"
                             unit="°"
                             axisLine={false}
                             tickLine={false}
-                            tick={{ fontSize: 10 }}
+                            tick={{ fontSize: 9 }}
+                            hide={false} // Phone par numbers rehne diye hain par chote
                         />
+
                         <Tooltip
+                            cursor={{ stroke: "#3b82f6", strokeWidth: 2 }}
                             contentStyle={{
                                 backgroundColor: "#0f172a",
                                 border: "1px solid #1e293b",
-                                borderRadius: "12px",
-                                fontSize: "11px",
+                                borderRadius: "8px",
+                                fontSize: "10px",
+                                padding: "8px",
                             }}
                         />
+
                         <Area
                             type="monotone"
                             dataKey="temp"
@@ -219,50 +223,63 @@ function ForecastContent() {
                             strokeWidth={3}
                             fillOpacity={1}
                             fill="url(#colorTemp)"
-                            animationDuration={800}
+                            animationDuration={1500}
+                            dot={{
+                                r: 4,
+                                fill: "#3b82f6",
+                                strokeWidth: 2,
+                                stroke: "#0f172a",
+                            }} // Har point par dot add kiya hai
+                            activeDot={{ r: 6, strokeWidth: 0 }}
                         />
                     </AreaChart>
                 </ResponsiveContainer>
             </div>
 
-            <div
-                className={`grid grid-cols-2 sm:grid-cols-5 gap-3 transition-opacity ${
-                    loading ? "opacity-50" : "opacity-100"
-                }`}
-            >
-                {forecast.map((day, i) => (
-                    <div
-                        key={i}
-                        className={`glass-card p-4 flex flex-col items-center gap-2 transition-all duration-300 border-b-2 ${
-                            activeIndex === i
-                                ? "border-blue-500 bg-blue-500/5 translate-y-[-4px]"
-                                : "border-transparent opacity-80"
-                        }`}
-                        onMouseEnter={() => setActiveIndex(i)}
-                    >
-                        <span className="text-slate-500 text-[9px] font-bold uppercase">
-                            {day.name}
-                        </span>
-                        <div className="text-2xl font-bold text-white">
-                            {day.temp}°
-                        </div>
-                        <div className="text-[9px] text-blue-400 font-bold uppercase px-2 py-0.5 bg-blue-500/10 rounded-md truncate w-full text-center">
-                            {day.condition}
-                        </div>
-                        <div className="w-full flex justify-between mt-2 pt-2 border-t border-white/5 text-slate-500">
-                            <div className="flex items-center gap-1">
-                                <Wind size={10} />
-                                <span className="text-[9px]">{day.wind}k</span>
+            {/* Cards Section: Mobile Swipe + Desktop Grid */}
+            <div className="relative">
+                {/* Mobile Hint Arrow */}
+                <div className="md:hidden absolute -right-2 top-1/2 -translate-y-1/2 z-10 animate-pulse text-blue-500/50">
+                    <ArrowRight size={20} />
+                </div>
+
+                <div className="flex md:grid md:grid-cols-5 gap-4 overflow-x-auto md:overflow-visible pb-4 md:pb-0 scrollbar-hide">
+                    {forecast.map((day, i) => (
+                        <div
+                            key={i}
+                            className={`glass-card p-4 min-w-[140px] md:min-w-0 flex flex-col items-center gap-2 transition-all duration-300 border-b-2 text-center ${
+                                activeIndex === i
+                                    ? "border-blue-500 bg-blue-500/5 translate-y-[-4px]"
+                                    : "border-transparent opacity-80"
+                            }`}
+                            onMouseEnter={() => setActiveIndex(i)}
+                        >
+                            <span className="text-slate-500 text-[9px] font-bold uppercase tracking-widest">
+                                {day.name}
+                            </span>
+                            <div className="text-2xl font-bold">
+                                {day.temp}°
                             </div>
-                            <div className="flex items-center gap-1">
-                                <Droplets size={10} />
-                                <span className="text-[9px]">
-                                    {day.humidity}%
-                                </span>
+                            <div className="text-[9px] text-blue-400 font-bold uppercase px-2 py-0.5 bg-blue-500/10 rounded-md w-full truncate">
+                                {day.condition}
+                            </div>
+                            <div className="w-full flex justify-between mt-2 pt-2 border-t border-white/5 text-slate-500">
+                                <div className="flex items-center gap-1">
+                                    <Wind size={10} />
+                                    <span className="text-[9px] font-bold">
+                                        {day.wind}k
+                                    </span>
+                                </div>
+                                <div className="flex items-center gap-1">
+                                    <Droplets size={10} />
+                                    <span className="text-[9px] font-bold">
+                                        {day.humidity}%
+                                    </span>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                ))}
+                    ))}
+                </div>
             </div>
         </div>
     );

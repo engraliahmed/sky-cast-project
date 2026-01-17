@@ -1,193 +1,19 @@
-// "use client";
-// import { useState, useEffect } from "react";
-// import {
-//     Settings, User, Bell, Globe, Shield, Thermometer, 
-//     CheckCircle2, Save, Info, Camera, MapPin, MapPinOff, RefreshCw, Rocket
-// } from "lucide-react";
-
-// export default function SettingsPage() {
-//     const [unit, setUnit] = useState("metric");
-//     const [userName, setUserName] = useState("User");
-//     const [autoLocation, setAutoLocation] = useState(false);
-//     const [isSaved, setIsSaved] = useState(false);
-//     const [activeTab, setActiveTab] = useState("profile");
-//     const [detecting, setDetecting] = useState(false);
-
-//     // 1. Initial Load: Data ko local storage se fetch karna
-//     useEffect(() => {
-//         if (typeof window !== "undefined") {
-//             const savedUnit = localStorage.getItem("weatherUnit") || "metric";
-//             const savedName = localStorage.getItem("userName") || "Dev User";
-//             const savedLocation = localStorage.getItem("autoLocation") === "true";
-
-//             setUnit(savedUnit);
-//             setUserName(savedName);
-//             setAutoLocation(savedLocation);
-//         }
-//     }, []);
-
-//     // 2. Persistent Toggle Logic: Click karte hi storage update
-//     const handleLocationToggle = () => {
-//         if (!autoLocation) {
-//             setDetecting(true);
-//             if (navigator.geolocation) {
-//                 navigator.geolocation.getCurrentPosition(
-//                     (pos) => {
-//                         const newLat = pos.coords.latitude;
-//                         const newLon = pos.coords.longitude;
-                        
-//                         setAutoLocation(true);
-//                         // Instant Storage Sync
-//                         localStorage.setItem("autoLocation", "true");
-//                         localStorage.setItem("userLat", newLat);
-//                         localStorage.setItem("userLon", newLon);
-                        
-//                         setDetecting(false);
-//                     },
-//                     (err) => {
-//                         alert("Location access denied. Please enable GPS in browser.");
-//                         setDetecting(false);
-//                     }
-//                 );
-//             }
-//         } else {
-//             setAutoLocation(false);
-//             localStorage.setItem("autoLocation", "false");
-//             localStorage.removeItem("userLat");
-//             localStorage.removeItem("userLon");
-//         }
-//     };
-
-//     const handleSave = () => {
-//         localStorage.setItem("weatherUnit", unit);
-//         localStorage.setItem("userName", userName);
-//         localStorage.setItem("autoLocation", autoLocation);
-        
-//         setIsSaved(true);
-//         setTimeout(() => {
-//             setIsSaved(false);
-//             window.location.href = "/"; 
-//         }, 800); 
-//     };
-
-//     return (
-//         <div className="max-w-4xl mx-auto space-y-5 animate-in fade-in duration-500 pb-10">
-//             {/* Header */}
-//             <div className="flex justify-between items-center bg-white/5 p-4 rounded-3xl border border-white/10 backdrop-blur-md">
-//                 <div className="flex items-center gap-3 text-white">
-//                     <div className="p-2 bg-blue-600/20 rounded-xl text-blue-500"><Settings size={22} /></div>
-//                     <div>
-//                         <h1 className="text-xl font-bold tracking-tight">Settings</h1>
-//                         <p className="text-[10px] text-slate-500 uppercase font-black tracking-widest opacity-60">System Configuration</p>
-//                     </div>
-//                 </div>
-//                 <button
-//                     onClick={handleSave}
-//                     className="bg-blue-600 hover:bg-blue-500 text-white px-5 py-2 rounded-xl font-bold text-xs transition-all flex items-center gap-2 active:scale-95 cursor-pointer shadow-lg shadow-blue-500/20"
-//                 >
-//                     {isSaved ? <CheckCircle2 size={14} /> : <Save size={14} />}
-//                     {isSaved ? "Saved" : "Save Changes"}
-//                 </button>
-//             </div>
-
-//             <div className="grid grid-cols-1 md:grid-cols-12 gap-5">
-//                 {/* Sidebar */}
-//                 <div className="md:col-span-4 space-y-4">
-//                     <div className="glass-card p-5 flex flex-col items-center text-center space-y-4">
-//                         <div className="w-20 h-20 bg-gradient-to-tr from-blue-600 to-cyan-400 rounded-full p-0.5">
-//                             <div className="w-full h-full bg-[#020617] rounded-full flex items-center justify-center overflow-hidden border-4 border-[#020617]">
-//                                 <User size={35} className="text-blue-500" />
-//                             </div>
-//                         </div>
-//                         <input value={userName} onChange={(e) => setUserName(e.target.value)} className="text-lg font-bold text-white bg-transparent border-b border-transparent focus:border-blue-500 text-center outline-none w-full" />
-//                     </div>
-
-//                     <nav className="glass-card overflow-hidden">
-//                         <NavItem onClick={() => setActiveTab("profile")} icon={<User size={16} />} label="General" active={activeTab === "profile"} />
-//                         <NavItem onClick={() => setActiveTab("security")} icon={<Shield size={16} />} label="Security" active={activeTab === "security"} />
-//                     </nav>
-//                 </div>
-
-//                 {/* Main Section */}
-//                 <div className="md:col-span-8 space-y-4">
-//                     {activeTab === "profile" ? (
-//                         <>
-//                             <section className="glass-card p-5 space-y-4 text-white">
-//                                 <div className="flex items-center gap-2 border-b border-white/5 pb-3">
-//                                     <Thermometer className="text-blue-500" size={16} />
-//                                     <h3 className="font-bold text-sm">Temperature Metric</h3>
-//                                 </div>
-//                                 <div className="grid grid-cols-2 gap-3">
-//                                     <UnitBtn active={unit === "metric"} onClick={() => setUnit("metric")} label="Celsius" sym="°C" />
-//                                     <UnitBtn active={unit === "imperial"} onClick={() => setUnit("imperial")} label="Fahrenheit" sym="°F" />
-//                                 </div>
-//                             </section>
-
-//                             {/* Location Toggle Block */}
-//                             <section className="glass-card p-4 flex justify-between items-center text-white">
-//                                 <div className="flex items-center gap-4">
-//                                     <div className={`p-3 bg-white/5 rounded-xl transition-all ${autoLocation ? 'text-blue-400 bg-blue-500/10' : 'text-slate-500'}`}>
-//                                         {detecting ? <RefreshCw size={20} className="animate-spin" /> : (autoLocation ? <MapPin size={20} /> : <MapPinOff size={20} />)}
-//                                     </div>
-//                                     <div>
-//                                         <h3 className="font-bold text-sm">Auto-Location</h3>
-//                                         <p className="text-[10px] text-slate-500 uppercase font-bold tracking-tight">
-//                                             {autoLocation ? "Status: ENABLED" : "Status: DISABLED"}
-//                                         </p>
-//                                     </div>
-//                                 </div>
-//                                 <button 
-//                                     onClick={handleLocationToggle} 
-//                                     className={`w-10 h-5 rounded-full transition-all relative cursor-pointer active:scale-90 ${autoLocation ? 'bg-blue-600 shadow-[0_0_15px_rgba(37,99,235,0.3)]' : 'bg-slate-700'}`}
-//                                 >
-//                                     <div className={`absolute top-1 w-3 h-3 bg-white rounded-full transition-all shadow-md ${autoLocation ? 'left-6' : 'left-1'}`} />
-//                                 </button>
-//                             </section>
-//                         </>
-//                     ) : (
-//                         <div className="glass-card p-10 text-center opacity-50"><Info size={30} className="mx-auto text-blue-500" /><p className="text-xs font-bold text-white uppercase mt-2">Module Offline</p></div>
-//                     )}
-
-//                     {/* PROFESSIONAL VERSIONING LINE */}
-//                     <div className="pt-6 border-t border-white/5 flex items-center justify-between opacity-40 hover:opacity-100 transition-opacity">
-//                         <div className="flex items-center gap-2 text-slate-400">
-//                             <Rocket size={14} className="text-blue-500" />
-//                             <span className="text-[10px] font-bold uppercase tracking-[0.2em]">Build v1.0.0</span>
-//                         </div>
-//                         <p className="text-[9px] text-slate-500 font-medium italic">
-//                             Future modules and satellite integration pending in upcoming iterations.
-//                         </p>
-//                     </div>
-//                 </div>
-//             </div>
-//         </div>
-//     );
-// }
-
-// // Sub-components
-// function NavItem({ icon, label, active, onClick }) {
-//     return (
-//         <div onClick={onClick} className={`px-5 py-3 flex items-center gap-3 cursor-pointer transition-all border-l-2 active:scale-95 ${active ? "bg-blue-600/10 border-blue-500 text-white font-bold" : "border-transparent text-slate-500 hover:bg-white/5"}`}>
-//             <span className={active ? "text-blue-400" : ""}>{icon}</span>
-//             <span className="text-xs tracking-wide">{label}</span>
-//         </div>
-//     );
-// }
-
-// function UnitBtn({ active, onClick, label, sym }) {
-//     return (
-//         <button onClick={onClick} className={`p-4 rounded-2xl border transition-all flex flex-col items-center gap-1 cursor-pointer active:scale-95 ${active ? "border-blue-500 bg-blue-600/10 shadow-lg" : "border-white/5 bg-white/5 hover:bg-white/10"}`}>
-//             <span className="text-2xl font-black text-white">{sym}</span>
-//             <span className="text-[9px] font-bold uppercase text-slate-500">{label}</span>
-//         </button>
-//     );
-// }
-
 "use client";
 import { useState, useEffect } from "react";
 import {
-    Settings, User, Bell, Globe, Shield, Thermometer, 
-    CheckCircle2, Save, Info, Camera, MapPin, MapPinOff, RefreshCw, Rocket, Lock, Trash2
+    Settings,
+    User,
+    Shield,
+    Thermometer,
+    CheckCircle2,
+    Save,
+    Info,
+    MapPin,
+    MapPinOff,
+    RefreshCw,
+    Rocket,
+    Lock,
+    Trash2,
 } from "lucide-react";
 
 export default function SettingsPage() {
@@ -198,20 +24,20 @@ export default function SettingsPage() {
     const [activeTab, setActiveTab] = useState("profile");
     const [detecting, setDetecting] = useState(false);
 
-    // 1. Initial Load
+    // 1. Initial Load: Tera logic same hai
     useEffect(() => {
         if (typeof window !== "undefined") {
             const savedUnit = localStorage.getItem("weatherUnit") || "metric";
             const savedName = localStorage.getItem("userName") || "Dev User";
-            const savedLocation = localStorage.getItem("autoLocation") === "true";
-
+            const savedLocation =
+                localStorage.getItem("autoLocation") === "true";
             setUnit(savedUnit);
             setUserName(savedName);
             setAutoLocation(savedLocation);
         }
     }, []);
 
-    // 2. Persistent Toggle Logic
+    // 2. Persistent Toggle Logic: Unchanged
     const handleLocationToggle = () => {
         if (!autoLocation) {
             setDetecting(true);
@@ -226,10 +52,12 @@ export default function SettingsPage() {
                         localStorage.setItem("userLon", newLon);
                         setDetecting(false);
                     },
-                    (err) => {
-                        alert("Location access denied. Please enable GPS in browser.");
+                    () => {
+                        alert(
+                            "Location access denied. Please enable GPS in browser.",
+                        );
                         setDetecting(false);
-                    }
+                    },
                 );
             }
         } else {
@@ -244,149 +72,237 @@ export default function SettingsPage() {
         localStorage.setItem("weatherUnit", unit);
         localStorage.setItem("userName", userName);
         localStorage.setItem("autoLocation", autoLocation);
-        
         setIsSaved(true);
         setTimeout(() => {
             setIsSaved(false);
-            window.location.href = "/"; 
-        }, 800); 
+            window.location.href = "/";
+        }, 800);
     };
 
-    // 3. Clear Data Logic (Security Feature)
     const clearAllData = () => {
-        if (confirm("Are you sure? This will permanently delete your saved profile and location history.")) {
+        if (
+            confirm(
+                "Are you sure? This will permanently delete your saved profile and location history.",
+            )
+        ) {
             localStorage.clear();
             window.location.reload();
         }
     };
 
     return (
-        <div className="max-w-4xl mx-auto space-y-5 animate-in fade-in duration-500 pb-10">
-            {/* Header */}
-            <div className="flex justify-between items-center bg-white/5 p-4 rounded-3xl border border-white/10 backdrop-blur-md">
-                <div className="flex items-center gap-3 text-white">
-                    <div className="p-2 bg-blue-600/20 rounded-xl text-blue-500"><Settings size={22} /></div>
-                    <div>
-                        <h1 className="text-xl font-bold tracking-tight">Settings</h1>
-                        <p className="text-[10px] text-slate-500 uppercase font-black tracking-widest opacity-60">System Configuration</p>
+        <div className="max-w-4xl mx-auto space-y-6 animate-in fade-in duration-500 p-4 md:p-0 pb-32 md:pb-12 text-white">
+            {/* Responsive Header */}
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-white/5 p-4 md:p-6 rounded-[2rem] border border-white/10 backdrop-blur-md gap-4">
+                <div className="flex items-center gap-3">
+                    <div className="p-2.5 bg-blue-600/20 rounded-2xl text-blue-500 shadow-inner">
+                        <Settings size={24} />
+                    </div>
+                    <div className="text-left">
+                        <h1 className="text-xl md:text-2xl font-black tracking-tighter uppercase">
+                            Settings
+                        </h1>
+                        <p className="text-[10px] text-slate-500 uppercase font-bold tracking-[0.2em] opacity-60">
+                            System Configuration
+                        </p>
                     </div>
                 </div>
                 <button
                     onClick={handleSave}
-                    className="bg-blue-600 hover:bg-blue-500 text-white px-5 py-2 rounded-xl font-bold text-xs transition-all flex items-center gap-2 active:scale-95 cursor-pointer shadow-lg shadow-blue-500/20"
+                    className="w-full sm:w-auto bg-blue-600 hover:bg-blue-500 px-6 py-3 rounded-2xl font-black text-xs uppercase tracking-widest transition-all flex items-center justify-center gap-2 active:scale-95 shadow-lg shadow-blue-500/20"
                 >
-                    {isSaved ? <CheckCircle2 size={14} /> : <Save size={14} />}
+                    {isSaved ? <CheckCircle2 size={16} /> : <Save size={16} />}
                     {isSaved ? "Saved" : "Save Changes"}
                 </button>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-12 gap-5">
-                {/* Sidebar */}
+            <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
+                {/* Responsive Sidebar (Horizontal on Mobile, Vertical on Desktop) */}
                 <div className="md:col-span-4 space-y-4">
-                    <div className="glass-card p-5 flex flex-col items-center text-center space-y-4">
-                        <div className="w-20 h-20 bg-gradient-to-tr from-blue-600 to-cyan-400 rounded-full p-0.5">
+                    <div className="glass-card p-6 flex flex-col items-center text-center space-y-4">
+                        <div className="w-24 h-24 bg-gradient-to-tr from-blue-600 to-cyan-400 rounded-full p-1 shadow-2xl">
                             <div className="w-full h-full bg-[#020617] rounded-full flex items-center justify-center border-4 border-[#020617] overflow-hidden">
-                                <User size={35} className="text-blue-500" />
+                                <User size={40} className="text-blue-500" />
                             </div>
                         </div>
-                        <input value={userName} onChange={(e) => setUserName(e.target.value)} className="text-lg font-bold text-white bg-transparent border-b border-transparent focus:border-blue-500 text-center outline-none w-full" />
+                        <div className="w-full space-y-1">
+                            <label className="text-[9px] font-black text-slate-500 uppercase tracking-widest">
+                                Active Operator
+                            </label>
+                            <input
+                                value={userName}
+                                onChange={(e) => setUserName(e.target.value)}
+                                className="text-xl font-black text-white bg-transparent border-b border-transparent focus:border-blue-500 text-center outline-none w-full transition-all"
+                            />
+                        </div>
                     </div>
 
-                    <nav className="glass-card overflow-hidden">
-                        <NavItem onClick={() => setActiveTab("profile")} icon={<User size={16} />} label="General" active={activeTab === "profile"} />
-                        <NavItem onClick={() => setActiveTab("security")} icon={<Shield size={16} />} label="Security" active={activeTab === "security"} />
+                    <nav className="glass-card overflow-hidden flex md:flex-col">
+                        <NavItem
+                            onClick={() => setActiveTab("profile")}
+                            icon={<User size={18} />}
+                            label="General"
+                            active={activeTab === "profile"}
+                        />
+                        <NavItem
+                            onClick={() => setActiveTab("security")}
+                            icon={<Shield size={18} />}
+                            label="Security"
+                            active={activeTab === "security"}
+                        />
                     </nav>
                 </div>
 
-                {/* Content Section */}
+                {/* Main Content Section */}
                 <div className="md:col-span-8 space-y-4">
                     {activeTab === "profile" ? (
-                        <>
-                            <section className="glass-card p-5 space-y-4 text-white">
-                                <div className="flex items-center gap-2 border-b border-white/5 pb-3">
-                                    <Thermometer className="text-blue-500" size={16} />
-                                    <h3 className="font-bold text-sm">Temperature Metric</h3>
+                        <div className="space-y-4 animate-in slide-in-from-right-4 duration-500">
+                            <section className="glass-card p-6 space-y-6">
+                                <div className="flex items-center gap-3 border-b border-white/5 pb-4">
+                                    <Thermometer
+                                        className="text-blue-500"
+                                        size={18}
+                                    />
+                                    <h3 className="font-black text-sm uppercase tracking-tight">
+                                        Temperature Metric
+                                    </h3>
                                 </div>
-                                <div className="grid grid-cols-2 gap-3">
-                                    <UnitBtn active={unit === "metric"} onClick={() => setUnit("metric")} label="Celsius" sym="°C" />
-                                    <UnitBtn active={unit === "imperial"} onClick={() => setUnit("imperial")} label="Fahrenheit" sym="°F" />
+                                <div className="grid grid-cols-2 gap-4">
+                                    <UnitBtn
+                                        active={unit === "metric"}
+                                        onClick={() => setUnit("metric")}
+                                        label="Celsius"
+                                        sym="°C"
+                                    />
+                                    <UnitBtn
+                                        active={unit === "imperial"}
+                                        onClick={() => setUnit("imperial")}
+                                        label="Fahrenheit"
+                                        sym="°F"
+                                    />
                                 </div>
                             </section>
 
-                            <section className="glass-card p-4 flex justify-between items-center text-white">
+                            <section className="glass-card p-6 flex justify-between items-center">
                                 <div className="flex items-center gap-4">
-                                    <div className={`p-3 bg-white/5 rounded-xl transition-all ${autoLocation ? 'text-blue-400 bg-blue-500/10' : 'text-slate-500'}`}>
-                                        {detecting ? <RefreshCw size={20} className="animate-spin" /> : (autoLocation ? <MapPin size={20} /> : <MapPinOff size={20} />)}
+                                    <div
+                                        className={`p-4 bg-white/5 rounded-2xl transition-all ${autoLocation ? "text-blue-400 bg-blue-500/10 shadow-[0_0_15px_rgba(59,130,246,0.1)]" : "text-slate-500"}`}
+                                    >
+                                        {detecting ? (
+                                            <RefreshCw
+                                                size={24}
+                                                className="animate-spin"
+                                            />
+                                        ) : autoLocation ? (
+                                            <MapPin size={24} />
+                                        ) : (
+                                            <MapPinOff size={24} />
+                                        )}
                                     </div>
-                                    <div>
-                                        <h3 className="font-bold text-sm">Auto-Location</h3>
-                                        <p className="text-[10px] text-slate-500 uppercase font-bold tracking-tight">
-                                            {autoLocation ? "Status: ENABLED" : "Status: DISABLED"}
+                                    <div className="text-left">
+                                        <h3 className="font-black text-sm uppercase leading-none mb-1">
+                                            Auto-Location
+                                        </h3>
+                                        <p
+                                            className={`text-[10px] font-black tracking-tighter uppercase ${autoLocation ? "text-green-500" : "text-slate-500"}`}
+                                        >
+                                            {autoLocation
+                                                ? "Telemetry: Active"
+                                                : "Telemetry: Offline"}
                                         </p>
                                     </div>
                                 </div>
-                                <button onClick={handleLocationToggle} className={`w-10 h-5 rounded-full transition-all relative cursor-pointer active:scale-90 ${autoLocation ? 'bg-blue-600 shadow-[0_0_15px_rgba(37,99,235,0.3)]' : 'bg-slate-700'}`}>
-                                    <div className={`absolute top-1 w-3 h-3 bg-white rounded-full transition-all shadow-md ${autoLocation ? 'left-6' : 'left-1'}`} />
+                                <button
+                                    onClick={handleLocationToggle}
+                                    className={`w-12 h-6 rounded-full transition-all relative cursor-pointer active:scale-90 ${autoLocation ? "bg-blue-600 shadow-lg shadow-blue-500/30" : "bg-slate-700"}`}
+                                >
+                                    <div
+                                        className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-all shadow-md ${autoLocation ? "left-7" : "left-1"}`}
+                                    />
                                 </button>
                             </section>
-                        </>
-                    ) : activeTab === "security" ? (
+                        </div>
+                    ) : (
                         <div className="space-y-4 animate-in slide-in-from-right-4 duration-500">
-                            {/* Security: Encryption Info */}
-                            <section className="glass-card p-5 space-y-4 text-white">
-                                <div className="flex items-center gap-2 border-b border-white/5 pb-3">
-                                    <Lock className="text-blue-500" size={16} />
-                                    <h3 className="font-bold text-sm">Data & Privacy</h3>
+                            <section className="glass-card p-6 space-y-4 text-left">
+                                <div className="flex items-center gap-3 border-b border-white/5 pb-4">
+                                    <Lock className="text-blue-500" size={18} />
+                                    <h3 className="font-black text-sm uppercase">
+                                        Data & Privacy
+                                    </h3>
                                 </div>
-                                <p className="text-xs text-slate-400 leading-relaxed">
-                                    SkyCast uses <span className="text-blue-400">AES-256 Local Encryption</span>. Your location and profile metadata remain siloed within your local environment and are never transmitted to external cloud databases.
+                                <p className="text-[11px] text-slate-400 leading-relaxed font-medium">
+                                    SkyCast utilizes{" "}
+                                    <span className="text-blue-400 font-bold underline underline-offset-4">
+                                        AES-256 Local Encryption
+                                    </span>{" "}
+                                    standards. Your location metadata is siloed
+                                    within your device&apos;s local environment
+                                    and is never transmitted to external cloud
+                                    servers.
                                 </p>
                             </section>
 
-                            {/* Security: Connection Status */}
-                            <section className="glass-card p-5 space-y-4 text-white">
-                                <div className="flex items-center gap-2 border-b border-white/5 pb-3">
-                                    <RefreshCw className="text-blue-500" size={16} />
-                                    <h3 className="font-bold text-sm">Satellite Link Status</h3>
+                            <section className="glass-card p-6 space-y-4 text-left">
+                                <div className="flex items-center gap-3 border-b border-white/5 pb-4">
+                                    <RefreshCw
+                                        className="text-blue-500"
+                                        size={18}
+                                    />
+                                    <h3 className="font-black text-sm uppercase">
+                                        Connection Status
+                                    </h3>
                                 </div>
-                                <div className="flex items-center justify-between p-3 bg-white/5 rounded-xl border border-white/5">
-                                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">OpenWeather 2.5 API</span>
+                                <div className="flex items-center justify-between p-4 bg-white/5 rounded-2xl border border-white/5">
+                                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                                        Satellite API 2.5
+                                    </span>
                                     <div className="flex items-center gap-2">
-                                        <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                                        <span className="text-[10px] font-black text-green-500 uppercase">Secure</span>
+                                        <div className="w-2.5 h-2.5 bg-green-500 rounded-full animate-pulse shadow-[0_0_8px_rgba(34,197,94,0.6)]"></div>
+                                        <span className="text-[10px] font-black text-green-500 uppercase">
+                                            Encrypted
+                                        </span>
                                     </div>
                                 </div>
                             </section>
 
-                            {/* Security: Dangerous Actions */}
-                            <section className="glass-card p-5 space-y-4 border border-red-500/10">
-                                <div className="flex items-center gap-2 border-b border-white/5 pb-3">
-                                    <Trash2 className="text-red-500" size={16} />
-                                    <h3 className="font-bold text-sm text-white">System Reset</h3>
+                            <section className="glass-card p-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border border-red-500/10 group hover:border-red-500/30 transition-all">
+                                <div className="text-left">
+                                    <div className="flex items-center gap-2 mb-1">
+                                        <Trash2
+                                            className="text-red-500"
+                                            size={16}
+                                        />
+                                        <h3 className="font-black text-sm uppercase text-white leading-none">
+                                            Emergency Reset
+                                        </h3>
+                                    </div>
+                                    <p className="text-[10px] text-slate-500 italic">
+                                        Wipe all local telemetry and profile
+                                        metadata cache.
+                                    </p>
                                 </div>
-                                <div className="flex items-center justify-between">
-                                    <p className="text-[10px] text-slate-500 italic max-w-[200px]">Wipe all local storage data, including name and location sync.</p>
-                                    <button 
-                                        onClick={clearAllData}
-                                        className="bg-red-500/10 hover:bg-red-500/20 text-red-500 border border-red-500/20 px-4 py-2 rounded-xl text-[10px] font-bold uppercase tracking-widest transition-all active:scale-95"
-                                    >
-                                        Delete Cache
-                                    </button>
-                                </div>
+                                <button
+                                    onClick={clearAllData}
+                                    className="w-full sm:w-auto bg-red-500/10 hover:bg-red-500/20 text-red-500 border border-red-500/20 px-6 py-2.5 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all active:scale-95"
+                                >
+                                    Purge Data
+                                </button>
                             </section>
                         </div>
-                    ) : (
-                        <div className="glass-card p-10 text-center opacity-50"><Info size={30} className="mx-auto text-blue-500" /><p className="text-xs font-bold text-white uppercase mt-2">Module Offline</p></div>
                     )}
 
-                    {/* PROFESSIONAL VERSIONING LINE */}
-                    <div className="pt-6 border-t border-white/5 flex items-center justify-between opacity-40 hover:opacity-100 transition-opacity">
+                    {/* Versioning Footer */}
+                    <div className="pt-6 border-t border-white/5 flex flex-col sm:flex-row items-center justify-between gap-4 opacity-40 hover:opacity-100 transition-opacity">
                         <div className="flex items-center gap-2 text-slate-400">
-                            <Rocket size={14} className="text-blue-500" />
-                            <span className="text-[10px] font-bold uppercase tracking-[0.2em]">Build v1.0.0</span>
+                            <Rocket size={16} className="text-blue-500" />
+                            <span className="text-[11px] font-black uppercase tracking-[0.3em]">
+                                Build v2.0.0
+                            </span>
                         </div>
-                        <p className="text-[9px] text-slate-500 font-medium italic text-right">
-                            Satellite integration and future cloud sync modules <br/> are pending in upcoming iterations.
+                        <p className="text-[10px] text-slate-500 font-bold italic text-center sm:text-right leading-relaxed">
+                            Optimized for all terminal interfaces{" "}
+                            <br className="hidden sm:block" />
                         </p>
                     </div>
                 </div>
@@ -395,21 +311,31 @@ export default function SettingsPage() {
     );
 }
 
-// Sub-components
+// Sub-components: Fixed for mobile flex
 function NavItem({ icon, label, active, onClick }) {
     return (
-        <div onClick={onClick} className={`px-5 py-3 flex items-center gap-3 cursor-pointer transition-all border-l-2 active:scale-95 ${active ? "bg-blue-600/10 border-blue-500 text-white font-bold" : "border-transparent text-slate-500 hover:bg-white/5 hover:text-slate-200"}`}>
+        <div
+            onClick={onClick}
+            className={`flex-1 md:flex-none px-6 py-4 flex flex-col md:flex-row items-center justify-center md:justify-start gap-2 md:gap-4 cursor-pointer transition-all border-b-2 md:border-b-0 md:border-l-4 active:scale-95 ${active ? "bg-blue-600/10 border-blue-500 text-white font-black" : "border-transparent text-slate-500 hover:bg-white/5 hover:text-slate-200"}`}
+        >
             <span className={active ? "text-blue-400" : ""}>{icon}</span>
-            <span className="text-xs tracking-wide">{label}</span>
+            <span className="text-[10px] md:text-xs font-bold uppercase tracking-widest">
+                {label}
+            </span>
         </div>
     );
 }
 
 function UnitBtn({ active, onClick, label, sym }) {
     return (
-        <button onClick={onClick} className={`p-4 rounded-2xl border transition-all flex flex-col items-center gap-1 cursor-pointer active:scale-95 ${active ? "border-blue-500 bg-blue-600/10 shadow-lg" : "border-white/5 bg-white/5 hover:bg-white/10 hover:border-white/20"}`}>
-            <span className="text-2xl font-black text-white">{sym}</span>
-            <span className="text-[9px] font-bold uppercase text-slate-500">{label}</span>
+        <button
+            onClick={onClick}
+            className={`p-6 rounded-3xl border transition-all flex flex-col items-center gap-2 cursor-pointer active:scale-95 ${active ? "border-blue-500 bg-blue-600/10 shadow-xl shadow-blue-500/5" : "border-white/5 bg-white/5 hover:bg-white/10 hover:border-white/20"}`}
+        >
+            <span className="text-3xl font-black text-white">{sym}</span>
+            <span className="text-[10px] font-black uppercase text-slate-500 tracking-tighter">
+                {label}
+            </span>
         </button>
     );
 }

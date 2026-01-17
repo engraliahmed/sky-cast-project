@@ -4,10 +4,63 @@
     background: #020617;
 }
 
-body {
-    @apply bg-[#020617] text-white selection:bg-blue-500/30;
+/* 1. Global Reset & Performance */
+* {
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent; /* Mobile touch blue box khatam karne ke liye */
 }
 
+body {
+    @apply bg-[#020617] text-white selection:bg-blue-500/30 overflow-x-hidden;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+}
+
+/* 2. Enhanced Glassmorphism */
 .glass-card {
-    @apply bg-white/5 backdrop-blur-xl border border-white/10 rounded-[2.5rem] shadow-2xl;
+    @apply bg-white/5 backdrop-blur-xl border border-white/10 rounded-[2.5rem] shadow-2xl transition-all duration-300;
+    /* Ek halki si inner shadow jo cards ko depth deti hai */
+    box-shadow: inset 0 1px 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.glass-card:hover {
+    @apply border-white/20 bg-white/[0.07];
+}
+
+/* 3. Custom Futuristic Scrollbar */
+/* Desktop ke liye patla aur clean scrollbar */
+::-webkit-scrollbar {
+    width: 5px;
+    height: 5px;
+}
+
+::-webkit-scrollbar-track {
+    @apply bg-transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    @apply bg-white/10 rounded-full hover:bg-blue-500/50 transition-all;
+}
+
+/* Forecast page ke cards ke liye scrollbar hide karna (Mobile par swipe ke liye) */
+.scrollbar-hide::-webkit-scrollbar {
+    display: none;
+}
+.scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+/* 4. Utility Classes for Animations */
+.animate-float {
+    animation: float 6s ease-in-out infinite;
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
+/* 5. Mobile Optimized Input Focus */
+input:focus {
+    @apply border-blue-500/50 bg-white/[0.08];
 }
