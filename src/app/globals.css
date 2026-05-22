@@ -1,36 +1,40 @@
 @import "tailwindcss";
 
 :root {
-    background: #020617;
+    --bg-gradient: radial-gradient(at 0% 0%, rgba(243, 244, 246, 0.6) 0, transparent 50%), 
+                  radial-gradient(at 100% 0%, rgba(219, 234, 254, 0.5) 0, transparent 50%),
+                  radial-gradient(at 50% 100%, rgba(224, 242, 254, 0.4) 0, transparent 50%);
+    background: #f8fafc;
 }
 
 /* 1. Global Reset & Performance */
 * {
     box-sizing: border-box;
-    -webkit-tap-highlight-color: transparent; /* Mobile touch blue box khatam karne ke liye */
+    -webkit-tap-highlight-color: transparent; /* Mobile touch box clear */
 }
 
 body {
-    @apply bg-[#020617] text-white selection:bg-blue-500/30 overflow-x-hidden;
+    @apply bg-[#f8fafc] text-slate-800 selection:bg-blue-100 selection:text-blue-900 overflow-x-hidden;
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+    background-image: var(--bg-gradient);
+    background-attachment: fixed;
 }
 
-/* 2. Enhanced Glassmorphism */
+/* 2. Enhanced Glassmorphism for Light Mode */
 .glass-card {
-    @apply bg-white/5 backdrop-blur-xl border border-white/10 rounded-[2.5rem] shadow-2xl transition-all duration-300;
-    /* Ek halki si inner shadow jo cards ko depth deti hai */
-    box-shadow: inset 0 1px 1px 0 rgba(255, 255, 255, 0.05);
+    @apply bg-white/70 backdrop-blur-xl border border-slate-200/80 rounded-[2.5rem] shadow-lg shadow-slate-100/50 transition-all duration-300;
+    /* Soft light inner reflection and depth */
+    box-shadow: inset 0 1px 1px 0 rgba(255, 255, 255, 0.8), 0 4px 20px -2px rgba(148, 163, 184, 0.08);
 }
 
 .glass-card:hover {
-    @apply border-white/20 bg-white/[0.07];
+    @apply border-slate-300/80 bg-white/80 shadow-xl shadow-slate-200/40;
 }
 
-/* 3. Custom Futuristic Scrollbar */
-/* Desktop ke liye patla aur clean scrollbar */
+/* 3. Custom Futuristic Scrollbar - Light Theme */
 ::-webkit-scrollbar {
-    width: 5px;
-    height: 5px;
+    width: 6px;
+    height: 6px;
 }
 
 ::-webkit-scrollbar-track {
@@ -38,7 +42,7 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-    @apply bg-white/10 rounded-full hover:bg-blue-500/50 transition-all;
+    @apply bg-slate-200 rounded-full hover:bg-blue-500/55 transition-all;
 }
 
 /* Forecast page ke cards ke liye scrollbar hide karna (Mobile par swipe ke liye) */
@@ -62,5 +66,5 @@ body {
 
 /* 5. Mobile Optimized Input Focus */
 input:focus {
-    @apply border-blue-500/50 bg-white/[0.08];
+    @apply border-blue-500/50 bg-white;
 }
