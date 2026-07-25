@@ -243,7 +243,7 @@ function ForecastContent() {
                                 backgroundColor: "#ffffff",
                                 border: "1px solid #e2e8f0",
                                 borderRadius: "12px",
-                                fontSize: "11px",
+                                fontSize: "12px",
                                 padding: "10px",
                                 color: "#1e293b",
                                 boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.04)",
