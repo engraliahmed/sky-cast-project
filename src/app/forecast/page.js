@@ -174,7 +174,7 @@ function ForecastContent() {
             </header>
 
             {error && (
-                <div className="flex items-center gap-3 p-4 bg-rose-50 border border-rose-100 rounded-2xl text-rose-600 text-sm font-bold text-left animate-in slide-in-from-top-2">
+                <div className="flex items-center gap-4 p-4 bg-rose-50 border border-rose-100 rounded-2xl text-rose-600 text-sm font-bold text-left animate-in slide-in-from-top-2">
                     <AlertCircle size={18} />
                     <p>{error}</p>
                 </div>
